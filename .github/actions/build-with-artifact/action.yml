@@ -35,7 +35,7 @@ runs:
       run: |
         $version = "${{ inputs.version }}" -replace 'testing_'
         if (![string]::IsNullOrWhiteSpace($version)) {
-          $path = "./${{ inputs.project }}/bin/${{ inputs.configuration }}/${{ inputs.project }}.json"
+          $path = "./${{ inputs.project }}/bin/x64/${{ inputs.configuration }}/${{ inputs.project }}.json"
           $json = Get-Content -Raw $path | ConvertFrom-Json
           $json.AssemblyVersion = $version
           $content = $json | ConvertTo-Json
@@ -44,7 +44,7 @@ runs:
     
     - name: Create Archive
       shell: pwsh
-      run: Compress-Archive -Path ${{ inputs.project }}/bin/${{ inputs.configuration }}/* -DestinationPath ${{ inputs.project }}.zip
+      run: Compress-Archive -Path ${{ inputs.project }}/bin/x64/${{ inputs.configuration }}/* -DestinationPath ${{ inputs.project }}.zip
       
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v4
