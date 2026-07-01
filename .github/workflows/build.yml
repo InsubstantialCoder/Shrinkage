@@ -1,4 +1,4 @@
-name: Sample PR Builder for SamplePlugin
+name: PR Builder for Shrinkage
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-2022
 
     env:
-      Solution_Name: SamplePlugin
+      Solution_Name: Shrinkage
 
     steps:
     - name: Checkout
@@ -19,7 +19,7 @@ jobs:
     - name: Install .NET
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Download Dalamud
       run: |
@@ -32,8 +32,6 @@ jobs:
     - name: Store artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: SamplePlugin
-        path: .\SamplePlugin\bin\x64\Release\SamplePlugin\*
+        name: Shrinkage
+        path: .\Shrinkage\bin\x64\Release\Shrinkage\*
         if-no-files-found: error
-        retention-days: 1
-

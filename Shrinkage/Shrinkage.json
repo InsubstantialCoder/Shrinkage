@@ -1,5 +1,5 @@
 {
-  "Author": "mikelosx",
+  "Author": "InsubstantialCoder",
   "Name": "Shrinkage",
   "Punchline": "Shrinks characters based on their Health!",
   "Description": "This plugin will shrink and grow characters based on how much health they have, affects you and your party \n\n/shrinkage to open the config window.",
@@ -7,5 +7,5 @@
   "Tags": [
       "funny"
   ],
-    "RepoUrl": "https://github.com/mikelosx/Shrinkage"
+    "RepoUrl": "https://github.com/InsubstantialCoder/Shrinkage"
 }
