@@ -14,9 +14,9 @@
     "DownloadCount": 0,
     "LastUpdate": 0,
     "LoadPriority": 69420,
-    "DownloadLinkInstall": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/release/shrinkage0_1_1.zip",
-    "DownloadLinkTesting": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/release/shrinkage0_1_1.zip",
-    "DownloadLinkUpdate": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/release/shrinkage0_1_1.zip",
+    "DownloadLinkInstall": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/1.0.0.0/Shrinkage.zip",
+    "DownloadLinkTesting": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/1.0.0.0/Shrinkage.zip",
+    "DownloadLinkUpdate": "https://github.com/InsubstantialCoder/Shrinkage/releases/download/1.0.0.0/Shrinkage.zip",
     "IconUrl": "https://raw.githubusercontent.com/InsubstantialCoder/Shrinkage/refs/heads/master/Shrinkage/images/icon.png"
   }
 ]
