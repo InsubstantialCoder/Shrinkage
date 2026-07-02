@@ -4,12 +4,12 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using Shrinkage.Windows;
+using SizeChange.Windows;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Vector3 = FFXIVClientStructs.FFXIV.Common.Math.Vector3;
 
-namespace Shrinkage;
+namespace SizeChange;
 
 public sealed class Plugin : IDalamudPlugin
 {
@@ -20,11 +20,11 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IFramework Framework { get; private set; } = null!;
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
 
-    private const string CommandName = "/shrinkage";
+    private const string CommandName = "/SizeChange";
 
     public Configuration Configuration { get; init; }
 
-    public readonly WindowSystem WindowSystem = new("Shrinkage");
+    public readonly WindowSystem WindowSystem = new("SizeChange");
     private ConfigWindow ConfigWindow { get; init; }
     public Plugin()
     {
@@ -38,7 +38,7 @@ public sealed class Plugin : IDalamudPlugin
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "opens the shrinkage config window"
+            HelpMessage = "opens the SizeChange config window"
         });
         
         PluginInterface.UiBuilder.Draw += WindowSystem.Draw;

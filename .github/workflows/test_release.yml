@@ -16,23 +16,23 @@ jobs:
         uses: ./.github/actions/prepare-environment
         with:
           dalamud-distrib: stg/
-          project: Shrinkage
+          project: SizeChange
       - name: Build and Upload Artifact
         uses: ./.github/actions/build-with-artifact
         with:
           configuration: Debug
-          project: Shrinkage
+          project: SizeChange
           version: ${{ github.ref_name }}
       - name: Create Release
         uses: ./.github/actions/create-release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          project: Shrinkage
+          project: SizeChange
           version: ${{ github.ref_name }}
       - name: Update repo.json
         uses: ./.github/actions/update-repo
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          project: Shrinkage
+          project: SizeChange
           version: ${{ github.ref_name }}
           testing: true

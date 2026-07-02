@@ -1,7 +1,7 @@
 ﻿using Dalamud.Configuration;
 using System;
 
-namespace Shrinkage;
+namespace SizeChange;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
