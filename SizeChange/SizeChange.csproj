@@ -2,10 +2,10 @@
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
   <PropertyGroup>
     <Version>1.0.0.0</Version>
-    <Description>Shrinks characters based on how much health they have!</Description>
-    <PackageProjectUrl>https://github.com/mikelosx/Shrinkage</PackageProjectUrl>
+    <Description>Changes size of characters based on how much health they have!</Description>
+    <PackageProjectUrl>https://github.com/InsubstantialCoder/SizeChange</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Shrinkage</RootNamespace>
+    <RootNamespace>SizeChange</RootNamespace>
   </PropertyGroup>
 </Project>

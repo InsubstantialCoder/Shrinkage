@@ -3,13 +3,13 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
 
-namespace Shrinkage.Windows;
+namespace SizeChange.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
     private readonly Configuration configuration;
     
-    public ConfigWindow(Plugin plugin) : base("Shrinkage Config")
+    public ConfigWindow(Plugin plugin) : base("SizeChange Config")
     {
 
         Size = new Vector2(350, 180);
