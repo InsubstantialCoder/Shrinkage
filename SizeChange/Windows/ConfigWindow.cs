@@ -23,24 +23,24 @@ public class ConfigWindow : Window, IDisposable
     public override void Draw()
     {
         var speed = configuration.Speed;
-        var minScale = configuration.MinScale;
-        var maxScale = configuration.MaxScale;
+        var minScaleMultiplier = configuration.MinScaleMultiplier;
+        var maxScaleMultiplier = configuration.MaxScaleMultiplier;
         var AlterParty = configuration.AlterParty;
         var Enable = configuration.Enable;
         var GrowFromDamage = configuration.GrowFromDamage;
         var OnlyActiveInCombat = configuration.OnlyActiveInCombat;
 
-        if (ImGui.DragFloat("Minimum Size", ref minScale, 0.01F, 0.01F, 1.00F))
+        if (ImGui.DragFloat("Minimum Size Multiplier", ref minScaleMultiplier, 0.01F, 0.01F, 1.00F))
         {
-            if (minScale > 1.00F){ minScale = 1.00F; }
-            configuration.MinScale = minScale;
+            if (minScaleMultiplier > 1.00F){ minScaleMultiplier = 1.00F; }
+            configuration.MinScaleMultiplier = minScaleMultiplier;
             configuration.Save();
         }
 
-        if (ImGui.DragFloat("Maximum Size", ref maxScale, 0.1F, 0.01F, 10.00F))
+        if (ImGui.DragFloat("Maximum Size Multiplier", ref maxScaleMultiplier, 0.1F, 0.01F, 10.00F))
         {
-            if (maxScale < 1.00F){ maxScale = 1.00F; }
-            configuration.MaxScale = maxScale;
+            if (maxScaleMultiplier < 1.00F){ maxScaleMultiplier = 1.00F; }
+            configuration.MaxScaleMultiplier = maxScaleMultiplier;
             configuration.Save();
         }
 
@@ -77,8 +77,8 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.Button("Default"))
         {
             configuration.AlterParty = true;
-            configuration.MinScale = 0.1f;
-            configuration.MaxScale = 1.0f;
+            configuration.MinScaleMultiplier = 0.1f;
+            configuration.MaxScaleMultiplier = 1.0f;
             configuration.Speed = 2.0f;
             configuration.Enable = true;
             configuration.OnlyActiveInCombat = false;

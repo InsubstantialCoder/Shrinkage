@@ -17,6 +17,11 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 namespace SizeChange;
 
+struct SCCharacterState {
+    public float PlayerScale;
+    public float PreviousScale;
+}
+
 public sealed class Plugin : IDalamudPlugin
 {
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
@@ -36,7 +41,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public readonly WindowSystem WindowSystem = new("SizeChange");
     private ConfigWindow ConfigWindow { get; init; }
-    private Dictionary<uint, float> CharacterIdToLastScaleMap = new Dictionary<uint, float>();
+    private Dictionary<uint, SCCharacterState> CharacterIdToLastScaleMap = new Dictionary<uint, SCCharacterState>();
     //private Dictionary<uint, long> _characterIdToTimestampMap = new Dictionary<uint, long>();
     public Plugin()
     {
@@ -120,10 +125,6 @@ public sealed class Plugin : IDalamudPlugin
         float health = actor->Health + shield;
         float hpRatio = health / maxhp;
         Logger.Information("hpRatio is {hpRatio}", hpRatio);
-        float targetScale = disable ? 1.0f : growFromDamage ? 
-            Math.Clamp(Configuration.MaxScale - (Configuration.MaxScale * hpRatio), Configuration.MinScale, Configuration.MaxScale) : 
-            Math.Clamp(hpRatio, Configuration.MinScale, Configuration.MaxScale);
-        Logger.Information("targetScale is {targetScale}", targetScale);
 
         var draw = (CharacterBase*)actor->DrawObject;
 
@@ -131,11 +132,35 @@ public sealed class Plugin : IDalamudPlugin
         {
             float scale = draw->Scale.Y;
             Logger.Information("current scale is {scale}", scale);
+            float previousScale = scale;
+            SCCharacterState charState;
+            if(CharacterIdToLastScaleMap.ContainsKey(actor->EntityId))
+            {
+                charState = CharacterIdToLastScaleMap[actor->EntityId];
+                previousScale = charState.PreviousScale;
+            }
+            else
+            {
+                charState = new SCCharacterState();
+                charState.PlayerScale = 1.0f;
+            }
+            Logger.Information("Previous scale is {scale}", previousScale);
+            if (previousScale != scale)
+            {
+                charState.PlayerScale = scale;
+            }
+            float targetScale = disable ? charState.PlayerScale : growFromDamage ? 
+            Math.Clamp(Configuration.MaxScaleMultiplier - (Configuration.MaxScaleMultiplier * hpRatio), Configuration.MinScaleMultiplier, Configuration.MaxScaleMultiplier)*charState.PlayerScale : 
+            Math.Clamp(hpRatio, Configuration.MinScaleMultiplier, Configuration.MaxScaleMultiplier)*charState.PlayerScale;
+            Logger.Information("targetScale is {targetScale}", targetScale);
+
             
-            scale = float.Lerp(scale, targetScale, Configuration.Speed / 100f);
+            scale = float.Lerp(previousScale, targetScale, Configuration.Speed / 100f);
             Logger.Information("scale after lerp is {scale}", scale);
             draw->Scale = new Vector3(scale, scale, scale);
             actor->Scale = scale;
+            charState.PreviousScale = scale;
+            CharacterIdToLastScaleMap[actor->EntityId] = charState;
         }
     }
     
