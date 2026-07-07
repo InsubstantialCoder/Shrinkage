@@ -8,8 +8,8 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
     
-    // if true will shrink all members in the party, false will only shrink the player
-    public bool AlterParty { get; set; } = true;
+    // if true will shrink or grow any player
+    public bool AlterAnyone { get; set; } = false;
     // the speed at which the model scales, higher is faster
     public float Speed { get; set; } = 2.0f;
     // the minimum size of the model

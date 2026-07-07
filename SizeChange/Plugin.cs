@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Dalamud.Game.Command;
@@ -27,13 +27,13 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
     [PluginService] internal static IObjectTable ObjectTable { get; private set; } = null!;
-    [PluginService] internal static IPartyList PartyList { get; private set; } = null!;
     [PluginService] internal static IFramework Framework { get; private set; } = null!;
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
     [PluginService] internal static ICondition Condition { get; private set; } = null!;
     [PluginService] internal static IPluginLog Logger { get; private set; } = null!;
 
-    private const string CommandName = "/sizechange";
+    private const string CommandName_SizeChange = "/sizechange";
+    private const string CommandName_Scale = "/scale";
     private const string Parameter_Enable = "enable";
     private const string Parameter_Disable = "disable";
 
@@ -42,7 +42,6 @@ public sealed class Plugin : IDalamudPlugin
     public readonly WindowSystem WindowSystem = new("SizeChange");
     private ConfigWindow ConfigWindow { get; init; }
     private Dictionary<uint, SCCharacterState> CharacterIdToLastScaleMap = new Dictionary<uint, SCCharacterState>();
-    //private Dictionary<uint, long> _characterIdToTimestampMap = new Dictionary<uint, long>();
     public Plugin()
     {
         Framework.Update += OnFrameworkUpdate;
@@ -53,9 +52,14 @@ public sealed class Plugin : IDalamudPlugin
 
         WindowSystem.AddWindow(ConfigWindow);
 
-        CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+        CommandManager.AddHandler(CommandName_SizeChange, new CommandInfo(OnCommand)
         {
             HelpMessage = "opens the SizeChange config window"
+        });
+
+        CommandManager.AddHandler(CommandName_Scale, new CommandInfo(OnCommand)
+        {
+            HelpMessage = "sets character's scale"
         });
         
         PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
@@ -73,46 +77,74 @@ public sealed class Plugin : IDalamudPlugin
 
         ConfigWindow.Dispose();
 
-        CommandManager.RemoveHandler(CommandName);
+        CommandManager.RemoveHandler(CommandName_SizeChange);
     }
 
-    private void OnCommand(string command, string args)
+    private unsafe void OnCommand(string command, string args)
     {
-        if(args == "")
+        if(command == CommandName_SizeChange)
         {
-            ConfigWindow.Toggle();
+            if(args == "")
+            {
+                ConfigWindow.Toggle();
+            }
+            if(args == Parameter_Enable)
+            {
+                Configuration.Enable = true;
+            }
+            if(args == Parameter_Disable)
+            {
+                Configuration.Enable = false;
+            }
         }
 
-        if(args == Parameter_Enable)
+        if(command == CommandName_Scale)
         {
-            Configuration.Enable = true;
+            float from_arg;
+            if(float.TryParse(args, out from_arg))
+            {
+                var player = ObjectTable.LocalPlayer;
+                if (player != null) 
+                {
+                    UpdateScale((Character*)player.Address, from_arg);
+                }
+            }
         }
-        if(args == Parameter_Disable)
+    }
+
+    private unsafe void UpdateScale(Character* actor, float scale)
+    {
+        SCCharacterState charState;
+        if(CharacterIdToLastScaleMap.ContainsKey(actor->EntityId))
         {
-            Configuration.Enable = false;
+            charState = CharacterIdToLastScaleMap[actor->EntityId];
         }
+        else
+        {
+            charState = new SCCharacterState();
+        }
+        charState.PlayerScale = scale;
+        var draw = (CharacterBase*)actor->DrawObject;
+        var currentScale = draw->Scale.Y;
+        charState.PreviousScale = currentScale;
+
+        CharacterIdToLastScaleMap[actor->EntityId] = charState;
     }
     
     private unsafe void OnFrameworkUpdate(IFramework framework)
     {
         bool disable = (ClientState.IsPvP || !Configuration.Enable|| (Configuration.OnlyActiveInCombat && !Condition[ConditionFlag.InCombat]));
         
-        if (PartyList.Length == 0 || !Configuration.AlterParty)
-        {
-            var player = ObjectTable.LocalPlayer;
+        var player = ObjectTable.LocalPlayer;
             if (player == null) return;
 
-            AdjustScale((Character*)player.Address, Configuration.GrowFromDamage, disable);
-        }
-        else
+        foreach (var thing in ObjectTable.PlayerObjects)
         {
-            foreach (var member in PartyList)
-            {
-                var actor = member.GameObject;
-                if (actor == null) continue;
-                
-                AdjustScale((Character*)actor.Address, Configuration.GrowFromDamage, disable);
-            }
+            var actor = thing;
+            if (actor == null) continue;
+            bool isLocalPlayer = ((Character*)player.Address)->EntityId == ((Character*)thing.Address)->EntityId;
+            
+            AdjustScale((Character*)actor.Address, Configuration.GrowFromDamage, disable || (!isLocalPlayer && !Configuration.AlterAnyone));
         }
     }
 
@@ -151,7 +183,7 @@ public sealed class Plugin : IDalamudPlugin
             }
             float targetScale = disable ? charState.PlayerScale : growFromDamage ? 
             Math.Clamp(Configuration.MaxScaleMultiplier - (Configuration.MaxScaleMultiplier * hpRatio), Configuration.MinScaleMultiplier, Configuration.MaxScaleMultiplier)*charState.PlayerScale : 
-            Math.Clamp(hpRatio, Configuration.MinScaleMultiplier, Configuration.MaxScaleMultiplier)*charState.PlayerScale;
+            Math.Clamp(hpRatio, Configuration.MinScaleMultiplier, float.PositiveInfinity)*charState.PlayerScale;
             Logger.Information("targetScale is {targetScale}", targetScale);
 
             

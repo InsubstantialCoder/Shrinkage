@@ -25,40 +25,20 @@ public class ConfigWindow : Window, IDisposable
         var speed = configuration.Speed;
         var minScaleMultiplier = configuration.MinScaleMultiplier;
         var maxScaleMultiplier = configuration.MaxScaleMultiplier;
-        var AlterParty = configuration.AlterParty;
+        var AlterAnyone = configuration.AlterAnyone;
         var Enable = configuration.Enable;
         var GrowFromDamage = configuration.GrowFromDamage;
         var OnlyActiveInCombat = configuration.OnlyActiveInCombat;
 
-        if (ImGui.DragFloat("Minimum Size Multiplier", ref minScaleMultiplier, 0.01F, 0.01F, 1.00F))
-        {
-            if (minScaleMultiplier > 1.00F){ minScaleMultiplier = 1.00F; }
-            configuration.MinScaleMultiplier = minScaleMultiplier;
-            configuration.Save();
-        }
-
-        if (ImGui.DragFloat("Maximum Size Multiplier", ref maxScaleMultiplier, 0.1F, 0.01F, 10.00F))
-        {
-            if (maxScaleMultiplier < 1.00F){ maxScaleMultiplier = 1.00F; }
-            configuration.MaxScaleMultiplier = maxScaleMultiplier;
-            configuration.Save();
-        }
-
-        if (ImGui.DragFloat("Speed", ref speed, 0.1F, 0.1F, 100.0F))
-        {
-            configuration.Speed = speed;
-            configuration.Save();
-        }
-        
-        if (ImGui.Checkbox("Scale Party", ref AlterParty))
-        {
-            configuration.AlterParty = AlterParty;
-            configuration.Save();
-        }
-
         if (ImGui.Checkbox("Enable", ref Enable))
         {
             configuration.Enable = Enable;
+            configuration.Save();
+        }
+        
+        if (ImGui.Checkbox("Scale Anyone", ref AlterAnyone))
+        {
+            configuration.AlterAnyone = AlterAnyone;
             configuration.Save();
         }
 
@@ -74,9 +54,29 @@ public class ConfigWindow : Window, IDisposable
             configuration.Save();
         }
 
+        if (ImGui.DragFloat("Speed", ref speed, 0.1F, 0.1F, 100.0F))
+        {
+            configuration.Speed = speed;
+            configuration.Save();
+        }
+
+        if (ImGui.DragFloat("Minimum Size Multiplier", ref minScaleMultiplier, 0.01F, 0.01F, 1.00F))
+        {
+            if (minScaleMultiplier > 1.00F){ minScaleMultiplier = 1.00F; }
+            configuration.MinScaleMultiplier = minScaleMultiplier;
+            configuration.Save();
+        }
+
+        if (GrowFromDamage && ImGui.DragFloat("Maximum Size Multiplier", ref maxScaleMultiplier, 0.1F, 0.01F, 10.00F))
+        {
+            if (maxScaleMultiplier < 1.00F){ maxScaleMultiplier = 1.00F; }
+            configuration.MaxScaleMultiplier = maxScaleMultiplier;
+            configuration.Save();
+        }
+
         if (ImGui.Button("Default"))
         {
-            configuration.AlterParty = true;
+            configuration.AlterAnyone = false;
             configuration.MinScaleMultiplier = 0.1f;
             configuration.MaxScaleMultiplier = 1.0f;
             configuration.Speed = 2.0f;
