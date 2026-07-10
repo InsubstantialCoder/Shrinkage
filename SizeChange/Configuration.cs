@@ -23,6 +23,10 @@ public class Configuration : IPluginConfiguration
     {
         if (MinScaleMultiplier > MaxScaleMultiplier){ MinScaleMultiplier = MaxScaleMultiplier; }
         if (MaxScaleMultiplier < MinScaleMultiplier) { MaxScaleMultiplier = MinScaleMultiplier; }
+        if (Speed <= 0)
+        {
+            Speed = 0.1f;
+        }
         
         Plugin.PluginInterface.SavePluginConfig(this);
     }

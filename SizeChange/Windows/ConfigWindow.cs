@@ -56,6 +56,9 @@ public class ConfigWindow : Window, IDisposable
 
         if (ImGui.DragFloat("Speed", ref speed, 0.1F, 0.1F, 100.0F))
         {
+            if(speed <= 0){
+                speed = 0.1f;
+            }
             configuration.Speed = speed;
             configuration.Save();
         }
